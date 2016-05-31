@@ -66,7 +66,7 @@
             // lblStart
             // 
             this.lblStart.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.lblStart.Location = new System.Drawing.Point(27, 22);
+            this.lblStart.Location = new System.Drawing.Point(27, 20);
             this.lblStart.Name = "lblStart";
             this.lblStart.Size = new System.Drawing.Size(67, 20);
             this.lblStart.TabIndex = 3;

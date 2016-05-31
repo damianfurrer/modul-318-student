@@ -32,9 +32,14 @@ namespace WindowsFormsApplication1
             }
             else
             {
-                //cob.DroppedDown = false;
-                unique = true;
-
+                cob.DroppedDown = true;
+                if (array[0] != null)
+                {
+                    cob.Items.Clear();
+                    cob.Items.Add(array[0]);
+                    cob.SelectionStart = cob.Text.Length;
+                    unique = true;
+                }
             }
             return unique;
         }
