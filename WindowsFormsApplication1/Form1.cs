@@ -42,68 +42,6 @@ namespace WindowsFormsApplication1
 
         }
 
-        private void UniqueStations()
-        {
-            //Wenn beide Stationen eindeutig sind wird die ListView mit den passenden Verbindungen befüllt.
-            if (m_StartStationUnique && m_EndStationUnique) //Wenn beide Stationen eindeutig sind wird die ListView mit den passenden Verbindungen befüllt.
-            {
-                livConnections.Items.Clear();
-                livConnections.Items.AddRange(getConnectionsasListViewItem(cobStart.Text, cobEnd.Text));
-            }
-        }
-
-        public string[] getAllStations(string Text)
-        {
-            //Alle zu dem Eingabetext passenden Stationen werden als Text Array zurück gegeben
-            string[] array = new string[50];
-            Stations stations2 = new Stations();
-            stations2 = m_transport.GetStations(Text);
-            for (int i = 0; i < stations2.StationList.Count && i < 50; i++)
-            {
-                array[i] = stations2.StationList[i].Name;
-            }
-
-            if (array == null)
-            {
-                array[0] = "Keine Stationen vorhanden";
-            }
-
-            return array;
-        }
-
-        public ListViewItem[] getConnectionsasListViewItem(string from, string to)
-        {
-            Connections connections2 = new Connections();
-            //Ein ListViewItem array, aller zu den from- & to-Stationen passenden Verbindungen wird zurückgegeben. Das  ListViewItem enthält Von-Stationsname, Abfahrtszeit, Bis-Stationsname, Ankunftszeit & die Dauer in Minuten.
-            connections2 = m_transport.GetConnections(from, to);
-            
-            ListViewItem[] liv = new ListViewItem[connections2.ConnectionList.Count];
-            for(int i=0;i< connections2.ConnectionList.Count; i++)
-            {
-                liv[i] = new ListViewItem(connections2.ConnectionList[i].From.Station.Name);
-                liv[i].SubItems.Add(DateTime.Parse(connections2.ConnectionList[i].From.Departure).ToShortTimeString());//connections2.ConnectionList[i].From.Departure.Substring(11,5));
-                liv[i].SubItems.Add(connections2.ConnectionList[i].To.Station.Name);
-                liv[i].SubItems.Add(DateTime.Parse(connections2.ConnectionList[i].To.Arrival).ToShortTimeString());
-                liv[i].SubItems.Add(TimeSpan.Parse(connections2.ConnectionList[i].Duration.Substring(3)).TotalMinutes.ToString() + " min"); 
-            }
-
-            if (liv == null)
-            {
-                liv[0] = new ListViewItem("Keine Verbindungen vorhanden");
-            }
-
-            return liv;
-
-        }
-
-        private void cobEnd_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            //bei der Auswahl eines Vorschlages, wird gesetzt, dass dieser Text eine eindeutige Station ist & nicht mehr beim anschliessenden Textevent beachtet werden muss.
-            m_ignoreend = true;
-            m_EndStationUnique = true;
-            //Wenn beide Stationstexte eindeutig sind wird die entsprechende Funktion ausgeführt.
-            if (m_StartStationUnique && m_EndStationUnique) { UniqueStations(); }
-        }
 
         private void cobStart_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -114,15 +52,27 @@ namespace WindowsFormsApplication1
             if (m_StartStationUnique && m_EndStationUnique) { UniqueStations(); }
         }
 
+        private void cobEnd_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //bei der Auswahl eines Vorschlages, wird gesetzt, dass dieser Text eine eindeutige Station ist & nicht mehr beim anschliessenden Textevent beachtet werden muss.
+            m_ignoreend = true;
+            m_EndStationUnique = true;
+            //Wenn beide Stationstexte eindeutig sind wird die entsprechende Funktion ausgeführt.
+            if (m_StartStationUnique && m_EndStationUnique) { UniqueStations(); }
+        }
+
         private void cobStart_TextUpdate(object sender, EventArgs e)
         {
+            m_StartStationUnique = false;
             //Aus performance Gründen wird der Text nur neu geprüft, wenn die Text länge länger wird.
             if (cobStart.Text.Length > m_cobStartLenght)
             {
-                m_StartStationUnique = OnTextUpdateGetStationName(cobStart,m_ignorestart);
+                Cursor.Current = Cursors.WaitCursor;
+                m_StartStationUnique = Functions.OnTextUpdateGetStationName(cobStart, m_ignorestart);
                 m_ignorestart = false;
                 //Wenn beide Stationstexte eindeutig sind wird die entsprechende Funktion ausgeführt.
                 if (m_StartStationUnique && m_EndStationUnique) { UniqueStations(); }
+                Cursor.Current = Cursors.Default;
             }
             m_cobStartLenght = cobStart.Text.Length;
 
@@ -130,13 +80,16 @@ namespace WindowsFormsApplication1
 
         private void cobEnd_TextUpdate(object sender, EventArgs e)
         {
+            m_EndStationUnique = false;
             //Aus performance Gründen wird der Text nur neu geprüft, wenn die Text länge länger wird.
             if (cobEnd.Text.Length > m_cobEndLenght)
             {
-                m_EndStationUnique = OnTextUpdateGetStationName(cobEnd,m_ignoreend);
+                Cursor.Current = Cursors.WaitCursor;
+                m_EndStationUnique = Functions.OnTextUpdateGetStationName(cobEnd, m_ignoreend);
                 m_ignoreend = false;
                 //Wenn beide Stationstexte eindeutig sind wird die entsprechende Funktion ausgeführt.
                 if (m_StartStationUnique && m_EndStationUnique) { UniqueStations(); }
+                Cursor.Current = Cursors.Default;
             }
             m_cobEndLenght = cobEnd.Text.Length;
         }
@@ -151,57 +104,41 @@ namespace WindowsFormsApplication1
             cobEnd.DroppedDown = true;
         }
 
-        private void btnAbfahrtstafel_Click(object sender, EventArgs e)
+        private void btnAbfahrtstafelStart_Click(object sender, EventArgs e)
         {
             //Zeigt Abfahtstafel Fenster an & übernimmt standardmässig die Start-Station.
+            Cursor.Current = Cursors.WaitCursor;
             FormAbfahrtstafel abfahrtstafel = new FormAbfahrtstafel();
-            abfahrtstafel.setCobStation(cobStart.Text);
-            abfahrtstafel.setMainForm(this);
+            if (m_StartStationUnique)
+            {
+                abfahrtstafel.setCobStation(cobStart.Text);
+                abfahrtstafel.UniqueStation();
+            }
+            Cursor.Current = Cursors.Default;
             abfahrtstafel.ShowDialog();
         }
 
-        public bool OnTextUpdateGetStationName(System.Windows.Forms.ComboBox cob, bool ignore)
+        private void btnAbfahrtstafelEnd_Click(object sender, EventArgs e)
         {
-            bool unique = false;
-                string[] array = getAllStations(cob.Text);
-                if (array.Length != 1)
-                {
-                    if (ignore != true)      //Bei einer Vorschlagsauswahl soll die Prüfung nicht durchlaufen werden & kann gesperrt werden
-                    {
-                        unique = false;
-                        cob.Items.Clear();
-                        int i = 0;
-                        while (i < 50 && array[i] != null)
-                        {
-                            cob.Items.Add(array[i]);
-                            i++;
-                        }
-                        cob.DroppedDown = true;
-                        cob.SelectionStart = cob.Text.Length;
-                    }
-                }
-                else
-                {
-                    cob.DroppedDown = false;
-                    unique = true;
-                    
-                }
-            return unique;
+            Cursor.Current = Cursors.WaitCursor;
+            //Zeigt Abfahtstafel Fenster an & übernimmt standardmässig die End-Station.
+            FormAbfahrtstafel abfahrtstafel = new FormAbfahrtstafel();
+            if (m_EndStationUnique)
+            {
+                abfahrtstafel.setCobStation(cobEnd.Text);
+                abfahrtstafel.UniqueStation();
+            }
+            Cursor.Current = Cursors.Default;
+            abfahrtstafel.ShowDialog();
+            
         }
 
-        public void StationAtGoogleMaps(string Station)
-        {
-            Stations stations = new Stations();
-            stations = m_transport.GetStations(Station);
-            string coordinate = stations.StationList.First().Coordinate.XCoordinate.ToString() + ", " + stations.StationList.First().Coordinate.YCoordinate.ToString();
-            System.Diagnostics.Process.Start("https://www.google.ch/maps/@" + coordinate);
-        }
 
         private void pibMapStart_Click(object sender, EventArgs e)
         {
             if (m_StartStationUnique)
             {
-                StationAtGoogleMaps(cobStart.Text);
+                Functions.StationAtGoogleMaps(cobStart.Text);
             }
         }
 
@@ -209,10 +146,45 @@ namespace WindowsFormsApplication1
         {
             if (m_EndStationUnique)
             {
-                StationAtGoogleMaps(cobEnd.Text);
+                Functions.StationAtGoogleMaps(cobEnd.Text);
+            }
+        }
+
+        private void UniqueStations()
+        {
+            //Wenn beide Stationen eindeutig sind wird die ListView mit den passenden Verbindungen befüllt.
+            if (m_StartStationUnique && m_EndStationUnique) //Wenn beide Stationen eindeutig sind wird die ListView mit den passenden Verbindungen befüllt.
+            {
+                livConnections.Items.Clear();
+                livConnections.Items.AddRange(getConnectionsasListViewItem(cobStart.Text, cobEnd.Text));
             }
         }
 
         
+        public ListViewItem[] getConnectionsasListViewItem(string from, string to)
+        {
+            Connections ConnectionsForListView = new Connections();
+            //Ein ListViewItem array, aller zu den from- & to-Stationen passenden Verbindungen wird zurückgegeben. Das  ListViewItem enthält Von-Stationsname, Abfahrtszeit, Bis-Stationsname, Ankunftszeit & die Dauer in Minuten.
+            ConnectionsForListView = m_transport.GetConnections(from, to);
+
+            ListViewItem[] liv = new ListViewItem[ConnectionsForListView.ConnectionList.Count];
+            for (int i = 0; i < ConnectionsForListView.ConnectionList.Count; i++)
+            {
+                liv[i] = new ListViewItem(ConnectionsForListView.ConnectionList[i].From.Station.Name);
+                liv[i].SubItems.Add(ConnectionsForListView.ConnectionList[i].To.Station.Name);
+                liv[i].SubItems.Add(DateTime.Parse(ConnectionsForListView.ConnectionList[i].From.Departure).ToShortTimeString());//connections2.ConnectionList[i].From.Departure.Substring(11,5));
+                liv[i].SubItems.Add(DateTime.Parse(ConnectionsForListView.ConnectionList[i].To.Arrival).ToShortTimeString());
+                liv[i].SubItems.Add(TimeSpan.Parse(ConnectionsForListView.ConnectionList[i].Duration.Substring(3)).TotalMinutes.ToString() + " min");
+            }
+
+            if (liv == null)
+            {
+                liv[0] = new ListViewItem("Keine Verbindungen vorhanden");
+            }
+
+            return liv;
+
+        }       
+
     }
 }

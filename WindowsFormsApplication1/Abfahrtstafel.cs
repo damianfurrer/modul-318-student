@@ -13,7 +13,6 @@ namespace WindowsFormsApplication1
 {
     public partial class FormAbfahrtstafel : Form
     {
-        Form1 MainForm;
         Transport m_transport = new Transport();
         bool m_ignoreStation;
         bool m_StationUnique;
@@ -25,21 +24,55 @@ namespace WindowsFormsApplication1
             InitializeComponent();
         }
 
-        public void setCobStation(string station)
+        private void cobStation_TextUpdate(object sender, EventArgs e)
         {
-            cobStation.Text = station;
+            //Aus performance Gründen wird der Text nur neu geprüft, wenn die Text länge länger wird.
+            m_StationUnique = false;
+            if (cobStation.Text.Length > m_cobStationLenght)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                m_StationUnique = Functions.OnTextUpdateGetStationName(cobStation, m_ignoreStation);
+                m_ignoreStation = false;
+                //Wenn beide Stationstexte eindeutig sind wird die entsprechende Funktion ausgeführt.
+                if (m_StationUnique) { UniqueStation(); }
+                Cursor.Current = Cursors.Default;
+            }
+            m_cobStationLenght = cobStation.Text.Length;
         }
 
-        public void setMainForm(Form1 form)
+        private void cobStation_Enter(object sender, EventArgs e)
         {
-            MainForm = form;
+            cobStation.DroppedDown = true;
         }
 
-        private void UniqueStations()
+        private void cobStation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //bei der Auswahl eines Vorschlages, wird gesetzt, dass dieser Text eine eindeutige Station ist & nicht mehr beim anschliessenden Textevent beachtet werden muss.
+            m_ignoreStation = true;
+            m_StationUnique = true;
+            UniqueStation();
+        }
+
+        private void pibMapStation_Click(object sender, EventArgs e)
+        {
+            if (m_StationUnique)
+            {
+                Functions.StationAtGoogleMaps(cobStation.Text);
+            }
+        }
+
+        public void UniqueStation()
         {
             livAbfahrtstafel.Items.Clear();
             livAbfahrtstafel.Items.AddRange(getStationBoardasListViewItem(cobStation.Text));
         }
+
+        public void setCobStation(string station)
+        {
+            m_StationUnique = true;
+            cobStation.Text = station;
+        }
+
 
         public ListViewItem[] getStationBoardasListViewItem(string Station)
         {
@@ -66,30 +99,9 @@ namespace WindowsFormsApplication1
             return liv;
         }
 
-        private void cobStation_TextUpdate(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
-            //Aus performance Gründen wird der Text nur neu geprüft, wenn die Text länge länger wird.
-            if (cobStation.Text.Length > m_cobStationLenght)
-            {
-                m_StationUnique = MainForm.OnTextUpdateGetStationName(cobStation, m_ignoreStation);
-                m_ignoreStation = false;
-                //Wenn beide Stationstexte eindeutig sind wird die entsprechende Funktion ausgeführt.
-                if (m_StationUnique) { UniqueStations(); }
-            }
-            m_cobStationLenght = cobStation.Text.Length;
-        }
-
-        private void cobStation_Enter(object sender, EventArgs e)
-        {
-            cobStation.DroppedDown = true;
-        }
-
-        private void cobStation_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //bei der Auswahl eines Vorschlages, wird gesetzt, dass dieser Text eine eindeutige Station ist & nicht mehr beim anschliessenden Textevent beachtet werden muss.
-            m_ignoreStation = true;
-            m_StationUnique = true;
-            UniqueStations();
+            Close();
         }
     }
 }

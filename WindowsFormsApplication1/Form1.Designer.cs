@@ -43,9 +43,10 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnAbfahrtstafel = new System.Windows.Forms.Button();
+            this.btnAbfahrtstafelStart = new System.Windows.Forms.Button();
             this.pibMapStart = new System.Windows.Forms.PictureBox();
             this.pibMapEnd = new System.Windows.Forms.PictureBox();
+            this.btnAbfahrtstafelEnd = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pibMapStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pibMapEnd)).BeginInit();
             this.SuspendLayout();
@@ -59,6 +60,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Verbindungen Suchen";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // lblStart
@@ -90,6 +92,7 @@
             this.label2.TabIndex = 9;
             this.label2.Text = "Start Zeit";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label2.Visible = false;
             // 
             // textBox2
             // 
@@ -97,6 +100,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(143, 20);
             this.textBox2.TabIndex = 8;
+            this.textBox2.Visible = false;
             // 
             // cobStart
             // 
@@ -120,7 +124,7 @@
             this.cobEnd.Name = "cobEnd";
             this.cobEnd.Size = new System.Drawing.Size(205, 21);
             this.cobEnd.TabIndex = 11;
-            this.cobEnd.SelectionChangeCommitted += new System.EventHandler(this.cobEnd_SelectionChangeCommitted);
+            this.cobEnd.SelectedIndexChanged += new System.EventHandler(this.cobEnd_SelectedIndexChanged);
             this.cobEnd.TextUpdate += new System.EventHandler(this.cobEnd_TextUpdate);
             this.cobEnd.Enter += new System.EventHandler(this.cobEnd_Enter);
             // 
@@ -143,13 +147,14 @@
             this.chbCoordinates.TabIndex = 16;
             this.chbCoordinates.Text = "Koordinaten beachten";
             this.chbCoordinates.UseVisualStyleBackColor = true;
+            this.chbCoordinates.Visible = false;
             // 
             // livConnections
             // 
             this.livConnections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2,
             this.columnHeader3,
+            this.columnHeader2,
             this.columnHeader4,
             this.columnHeader5});
             this.livConnections.Location = new System.Drawing.Point(24, 188);
@@ -163,7 +168,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Von";
-            this.columnHeader1.Width = 31;
+            this.columnHeader1.Width = 200;
             // 
             // columnHeader2
             // 
@@ -173,7 +178,7 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "Bis";
-            this.columnHeader3.Width = 26;
+            this.columnHeader3.Width = 200;
             // 
             // columnHeader4
             // 
@@ -185,21 +190,22 @@
             this.columnHeader5.Text = "Dauer";
             this.columnHeader5.Width = 401;
             // 
-            // btnAbfahrtstafel
+            // btnAbfahrtstafelStart
             // 
-            this.btnAbfahrtstafel.Location = new System.Drawing.Point(409, 80);
-            this.btnAbfahrtstafel.Name = "btnAbfahrtstafel";
-            this.btnAbfahrtstafel.Size = new System.Drawing.Size(75, 23);
-            this.btnAbfahrtstafel.TabIndex = 18;
-            this.btnAbfahrtstafel.Text = "Abfahrtstafel";
-            this.btnAbfahrtstafel.UseVisualStyleBackColor = true;
-            this.btnAbfahrtstafel.Click += new System.EventHandler(this.btnAbfahrtstafel_Click);
+            this.btnAbfahrtstafelStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAbfahrtstafelStart.Location = new System.Drawing.Point(312, 16);
+            this.btnAbfahrtstafelStart.Name = "btnAbfahrtstafelStart";
+            this.btnAbfahrtstafelStart.Size = new System.Drawing.Size(81, 30);
+            this.btnAbfahrtstafelStart.TabIndex = 18;
+            this.btnAbfahrtstafelStart.Text = "Abfahrtstafel";
+            this.btnAbfahrtstafelStart.UseVisualStyleBackColor = true;
+            this.btnAbfahrtstafelStart.Click += new System.EventHandler(this.btnAbfahrtstafelStart_Click);
             // 
             // pibMapStart
             // 
             this.pibMapStart.BackgroundImage = global::WindowsFormsApplication1.Properties.Resources.maps_64dp_1_;
             this.pibMapStart.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pibMapStart.Location = new System.Drawing.Point(312, 15);
+            this.pibMapStart.Location = new System.Drawing.Point(395, 16);
             this.pibMapStart.Name = "pibMapStart";
             this.pibMapStart.Size = new System.Drawing.Size(32, 32);
             this.pibMapStart.TabIndex = 19;
@@ -210,21 +216,33 @@
             // 
             this.pibMapEnd.BackgroundImage = global::WindowsFormsApplication1.Properties.Resources.maps_64dp_1_;
             this.pibMapEnd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pibMapEnd.Location = new System.Drawing.Point(312, 45);
+            this.pibMapEnd.Location = new System.Drawing.Point(395, 46);
             this.pibMapEnd.Name = "pibMapEnd";
             this.pibMapEnd.Size = new System.Drawing.Size(32, 32);
             this.pibMapEnd.TabIndex = 20;
             this.pibMapEnd.TabStop = false;
             this.pibMapEnd.Click += new System.EventHandler(this.pibMapEnd_Click);
             // 
+            // btnAbfahrtstafelEnd
+            // 
+            this.btnAbfahrtstafelEnd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAbfahrtstafelEnd.Location = new System.Drawing.Point(312, 48);
+            this.btnAbfahrtstafelEnd.Name = "btnAbfahrtstafelEnd";
+            this.btnAbfahrtstafelEnd.Size = new System.Drawing.Size(81, 30);
+            this.btnAbfahrtstafelEnd.TabIndex = 21;
+            this.btnAbfahrtstafelEnd.Text = "Abfahrtstafel";
+            this.btnAbfahrtstafelEnd.UseVisualStyleBackColor = true;
+            this.btnAbfahrtstafelEnd.Click += new System.EventHandler(this.btnAbfahrtstafelEnd_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(636, 391);
+            this.ClientSize = new System.Drawing.Size(609, 391);
+            this.Controls.Add(this.btnAbfahrtstafelEnd);
             this.Controls.Add(this.pibMapEnd);
             this.Controls.Add(this.pibMapStart);
-            this.Controls.Add(this.btnAbfahrtstafel);
+            this.Controls.Add(this.btnAbfahrtstafelStart);
             this.Controls.Add(this.livConnections);
             this.Controls.Add(this.chbCoordinates);
             this.Controls.Add(this.lblConnections);
@@ -261,9 +279,10 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.Button btnAbfahrtstafel;
+        private System.Windows.Forms.Button btnAbfahrtstafelStart;
         private System.Windows.Forms.PictureBox pibMapStart;
         private System.Windows.Forms.PictureBox pibMapEnd;
+        private System.Windows.Forms.Button btnAbfahrtstafelEnd;
     }
 }
 

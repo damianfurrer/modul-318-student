@@ -35,6 +35,9 @@
             this.colOperator = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colDeparture = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colTo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.pibMapStation = new System.Windows.Forms.PictureBox();
+            this.btnClose = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pibMapStation)).BeginInit();
             this.SuspendLayout();
             // 
             // cobStation
@@ -95,16 +98,40 @@
             this.colTo.Text = "Bis Station";
             this.colTo.Width = 358;
             // 
+            // pibMapStation
+            // 
+            this.pibMapStation.BackgroundImage = global::WindowsFormsApplication1.Properties.Resources.maps_64dp_1_;
+            this.pibMapStation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pibMapStation.Location = new System.Drawing.Point(351, 20);
+            this.pibMapStation.Name = "pibMapStation";
+            this.pibMapStation.Size = new System.Drawing.Size(32, 32);
+            this.pibMapStation.TabIndex = 20;
+            this.pibMapStation.TabStop = false;
+            this.pibMapStation.Click += new System.EventHandler(this.pibMapStation_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(499, 270);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.TabIndex = 21;
+            this.btnClose.Text = "Schliessen";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // FormAbfahrtstafel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 273);
+            this.ClientSize = new System.Drawing.Size(610, 305);
+            this.Controls.Add(this.btnClose);
+            this.Controls.Add(this.pibMapStation);
             this.Controls.Add(this.livAbfahrtstafel);
             this.Controls.Add(this.lblStart);
             this.Controls.Add(this.cobStation);
             this.Name = "FormAbfahrtstafel";
             this.Text = "Abfahrtstafel";
+            ((System.ComponentModel.ISupportInitialize)(this.pibMapStation)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -118,5 +145,7 @@
         private System.Windows.Forms.ColumnHeader colOperator;
         private System.Windows.Forms.ColumnHeader colDeparture;
         private System.Windows.Forms.ColumnHeader colTo;
+        private System.Windows.Forms.PictureBox pibMapStation;
+        private System.Windows.Forms.Button btnClose;
     }
 }
