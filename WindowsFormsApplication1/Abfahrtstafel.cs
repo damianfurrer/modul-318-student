@@ -79,7 +79,19 @@ namespace WindowsFormsApplication1
             Stations stations = new Stations();
             stations = m_transport.GetStations(Station);
             string id = stations.StationList.First().Id;
-            StationBoardRoot boardroot = m_transport.GetStationBoard(Station, id);
+            StationBoardRoot boardroot;
+            try
+            {
+                boardroot = m_transport.GetStationBoard(Station, id);
+            }
+            catch(Exception e)
+            {
+                ListViewItem[] liv2 = new ListViewItem[1];
+                liv2[0] = new ListViewItem("FEHLER");
+                liv2[0].SubItems.Add(e.Message);
+                return liv2;
+
+            }
             ListViewItem[] liv = new ListViewItem[boardroot.Entries.Count];
             int i = 0;
             foreach (StationBoard board in boardroot.Entries)

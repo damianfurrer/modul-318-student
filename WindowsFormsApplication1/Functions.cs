@@ -16,7 +16,7 @@ namespace WindowsFormsApplication1
             string[] array = getAllStations(cob.Text);
             if (array[1] != null)
             {
-                if (ignore != true)      //Bei einer Vorschlagsauswahl soll die Prüfung nicht durchlaufen werden & kann gesperrt werden
+                if (ignore != true)      //Bei einer Vorschlagsauswahl soll die Prüfung nicht unnötig durchlaufen werden & kann gesperrt werden
                 {
                     unique = false;
                     cob.Items.Clear();
@@ -59,7 +59,16 @@ namespace WindowsFormsApplication1
             Transport m_transport = new Transport();
             string[] array = new string[50];
             Stations stations2 = new Stations();
-            stations2 = m_transport.GetStations(Text);
+            try
+            {
+                stations2 = m_transport.GetStations(Text);
+            }
+            catch(Exception e)
+            {
+                array[0] = "FEHLER";
+                array[1] = e.Message;
+                return array;
+            }
             for (int i = 0; i < stations2.StationList.Count && i < 50; i++)
             {
                 array[i] = stations2.StationList[i].Name;

@@ -165,8 +165,17 @@ namespace WindowsFormsApplication1
         {
             Connections ConnectionsForListView = new Connections();
             //Ein ListViewItem array, aller zu den from- & to-Stationen passenden Verbindungen wird zurückgegeben. Das  ListViewItem enthält Von-Stationsname, Abfahrtszeit, Bis-Stationsname, Ankunftszeit & die Dauer in Minuten.
-            ConnectionsForListView = m_transport.GetConnections(from, to);
-
+            try
+            {
+                ConnectionsForListView = m_transport.GetConnections(from, to);
+            }
+            catch(Exception e)
+            {
+                ListViewItem[] liv2 = new ListViewItem[1];
+                liv2[0] = new ListViewItem("FEHLER");
+                liv2[0].SubItems.Add(e.Message);
+                return liv2;
+            }
             ListViewItem[] liv = new ListViewItem[ConnectionsForListView.ConnectionList.Count];
             for (int i = 0; i < ConnectionsForListView.ConnectionList.Count; i++)
             {
